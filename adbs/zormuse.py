@@ -1,6 +1,7 @@
 from datetime import date
 
 #1.增加 save
+
 from adbs.models import BookInfo, HeroInfo
 
 book = BookInfo(
@@ -57,3 +58,15 @@ BookInfo.objects.filter(id__in=[2,4])
 BookInfo.objects.filter(bpub_date__year=1995)
 BookInfo.objects.filter(bpub_date__gte=date(1995,1,1))
 
+#1. 两个 字段 对比 过滤 breaad__get = bcomment F对象
+# 例：查询阅读量大于等于评论量的图书
+from django.db.models import F, Q
+
+BookInfo.objects.filter(bread__gte=F('bcomment'))
+BookInfo.objects.filter(bcomment__gte=F('bread')*2)
+#2. 两个条件 对比 过滤 Q对象 & | ~
+# 查询2阅读量大于20，并且编号小于3的图书。&
+BookInfo.objects.filter(bread__gt=20,id__lt=3)
+BookInfo.objects.filter(Q(bread__gt=20) & Q(id__lt=3))
+BookInfo.objects.filter(Q(bread__gt=20) | Q(id__lt=3))
+BookInfo.objects.filter(~Q(id=3))
